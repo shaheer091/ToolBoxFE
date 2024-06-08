@@ -6,6 +6,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CommonService } from 'src/app/services/common.service';
 
 @Component({
@@ -16,7 +17,8 @@ import { CommonService } from 'src/app/services/common.service';
 export class SignupComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
-    private commonService: CommonService
+    private commonService: CommonService,
+    private router: Router,
   ) {}
   signupForm!: FormGroup;
 
@@ -54,7 +56,11 @@ export class SignupComponent implements OnInit {
       this.commonService.signupUser(this.signupForm.value).subscribe({
         next: (res) => {
           console.log(res);
-          localStorage.setItem('token', res.token)
+          localStorage.setItem('token', res.token);
+          if (res.success) {
+            this.signupForm.reset();
+            this.router.navigate(['/user/home'])
+          }
         },
         error: (err) => {
           console.log(err);
